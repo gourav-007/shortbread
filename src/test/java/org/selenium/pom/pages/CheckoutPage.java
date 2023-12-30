@@ -82,9 +82,8 @@ public class CheckoutPage extends BasePage {
         return this;
     }
 
-    public CheckoutPage clickOnLogin(){
+    public void clickOnLogin(){
         driver.findElement(loginBtn).click();
-        return this;
     }
 
     public CheckoutPage login(String username, String password){
