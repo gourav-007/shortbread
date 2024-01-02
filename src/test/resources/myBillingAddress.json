@@ -1,8 +1,10 @@
 {
   "firstName": "demo",
   "lastName": "user",
-  "addressLineOne": "San Fransisco",
-  "city": "San Fransisco",
-  "postalCode": "94188",
+  "country": "India",
+  "addressLineOne": "Delhi",
+  "city": "Delhi",
+  "state": "Delhi",
+  "postalCode": "110092",
   "email": "demouser94188@outlook.com"
 }

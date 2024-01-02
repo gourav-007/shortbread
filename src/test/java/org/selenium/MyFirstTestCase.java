@@ -3,6 +3,7 @@ package org.selenium;
 import org.selenium.pom.base.BaseTest;
 import org.selenium.pom.objects.BillingAddress;
 import org.selenium.pom.objects.Product;
+import org.selenium.pom.objects.User;
 import org.selenium.pom.pages.CartPage;
 import org.selenium.pom.pages.CheckoutPage;
 import org.selenium.pom.pages.HomePage;
@@ -29,33 +30,25 @@ public class MyFirstTestCase extends BaseTest {
                 .navigateToStoreUsingMenu()
                 .search("Blue");
 
-        System.out.println(product.getName());
         Assert.assertEquals(storePage.getTitle(),"Search results: “Blue”");
-        storePage.clickAddToCartBtn(product.getName());
-        Thread.sleep(5000);
-        CartPage cartPage = storePage.clickOnViewCartBtn();
+        CartPage cartPage = storePage.clickAddToCartBtn(product.getName())
+                .clickOnViewCartBtn();
+
         Assert.assertEquals(cartPage.getProductName(),product.getName());
         CheckoutPage checkoutPage = cartPage.checkout();
         checkoutPage
                 .setBillingData(billingAddress)
+                .selectDirectBankTransfer()
                 .clickOnPlaceOrder();
-        Thread.sleep(5000);
+
         Assert.assertEquals(checkoutPage.getNotice(),"Thank you. Your order has been received.");
     }
 
     @Test
-    public void loginAndCheckoutUsingDirectBankTransfer() throws InterruptedException {
-        String product = "Blue Shoes";
-
-        BillingAddress billingAddress = BillingAddress
-                .builder()
-                .firstName("demo")
-                .lastName("user")
-                .addressLineOne("San Francisco")
-                .city("San Francisco")
-                .postalCode("94188")
-                .email("demouser94188@outlook.com")
-                .build();
+    public void loginAndCheckoutUsingDirectBankTransfer() throws InterruptedException, IOException {
+        Product product = new Product(1215);
+        User user = new User(1);
+        BillingAddress billingAddress = JacksonUtils.deSerialize("myBillingAddress.json", BillingAddress.class);
 
         StorePage storePage = new HomePage(driver)
                 .load()
@@ -63,21 +56,17 @@ public class MyFirstTestCase extends BaseTest {
                 .search("Blue");
 
         Assert.assertEquals(storePage.getTitle(),"Search results: “Blue”");
-        storePage.clickAddToCartBtn(product);
-        Thread.sleep(5000);
-        CartPage cartPage = storePage.clickOnViewCartBtn();
-        Assert.assertEquals(cartPage.getProductName(),"Blue Shoes");
+        CartPage cartPage = storePage.clickAddToCartBtn(product.getName())
+                .clickOnViewCartBtn();
+
+        Assert.assertEquals(cartPage.getProductName(),product.getName());
         CheckoutPage checkoutPage = cartPage.checkout();
         checkoutPage.clickOnLoginLink();
-        Thread.sleep(5000);
+
         checkoutPage
-                .login("demouser94189","demouser94189")
-                .enterFirstName("demo")
-                .enterLastName("user")
-                .enterBillingAddress1("San Francisco")
-                .enterBillingCity("San Francisco")
-                .enterBillingPostCode("94188")
-                .enterBillingEmail("demouser94188@outlook.com")
+                .login(user)
+                .setBillingData(billingAddress)
+                .selectDirectBankTransfer()
                 .clickOnPlaceOrder();
         Thread.sleep(5000);
         Assert.assertEquals(checkoutPage.getNotice(),"Thank you. Your order has been received.");

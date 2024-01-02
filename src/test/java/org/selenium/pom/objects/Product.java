@@ -20,7 +20,7 @@ public class Product {
         for (Product product : products){
             if (product.getId() == id) {
                 this.id = id;
-                this.name = getName();
+                this.name = product.getName();
             }
         }
     }
